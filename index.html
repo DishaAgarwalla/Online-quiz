@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Online Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <h1><i class="fas fa-brain"></i> CodeMaster Quiz</h1>
+            <div class="theme-selector">
+                <button class="theme-btn light" data-theme="light" title="Light Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="theme-btn dark" data-theme="dark" title="Dark Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="theme-btn blue" data-theme="blue" title="Blue Theme">
+                    <i class="fas fa-palette"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Quiz Selection -->
+        <div class="quiz-selection" id="quizSelection">
+            <h2>Select a Quiz Topic</h2>
+            <p class="selection-instruction">Choose one topic to start the quiz. You can change your selection anytime.</p>
+            <div class="topic-cards">
+                <div class="topic-card" data-topic="web">
+                    <i class="fas fa-code"></i>
+                    <h3>Web Development</h3>
+                    <p>10 questions about HTML, CSS & JavaScript</p>
+                    <div class="topic-badge">Popular</div>
+                </div>
+                <div class="topic-card" data-topic="js">
+                    <i class="fab fa-js-square"></i>
+                    <h3>JavaScript</h3>
+                    <p>8 questions about JavaScript fundamentals</p>
+                    <div class="topic-badge">Intermediate</div>
+                </div>
+                <div class="topic-card" data-topic="general">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Programming Concepts</h3>
+                    <p>12 questions with graphs and visualizations</p>
+                    <div class="topic-badge">Advanced</div>
+                </div>
+            </div>
+            <div class="selection-controls">
+                <button class="btn secondary-btn" id="viewAllTopicsBtn">
+                    <i class="fas fa-eye"></i> View All Topics
+                </button>
+                <button class="btn primary-btn" id="startQuizBtn">
+                    <i class="fas fa-play"></i> Start Selected Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div class="quiz-container hidden" id="quizContainer">
+            <!-- Quiz Header with Exit Button -->
+            <div class="quiz-header">
+                <button class="btn exit-btn" id="exitQuizBtn" title="Exit to Topic Selection">
+                    <i class="fas fa-sign-out-alt"></i> Exit Quiz
+                </button>
+                <div class="quiz-title">
+                    <h3 id="quizTitle">Web Development Quiz</h3>
+                    <p id="quizDescription">Test your knowledge on web technologies</p>
+                </div>
+            </div>
+
+            <!-- Quiz Info -->
+            <div class="quiz-info">
+                <div class="info-item">
+                    <span class="info-label">Question:</span>
+                    <span id="currentQuestion">1</span>/<span id="totalQuestions">10</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Score:</span>
+                    <span id="score">0</span> points
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Time:</span>
+                    <span id="timer">60</span>s
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Question -->
+            <div class="question-section">
+                <h2 id="question">Question will appear here</h2>
+                <div class="question-meta">
+                    <span class="difficulty" id="difficulty">Easy</span>
+                    <span class="category" id="category">Web Development</span>
+                </div>
+            </div>
+
+            <!-- Graph Container (for graph questions) -->
+            <div class="graph-container hidden" id="graphContainer">
+                <canvas id="quizGraph"></canvas>
+            </div>
+
+            <!-- Options -->
+            <div class="options" id="optionsContainer">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+
+            <!-- Quiz Controls -->
+            <div class="quiz-controls">
+                <button class="btn secondary-btn" id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <div class="mid-controls">
+                    <button class="btn warning-btn" id="changeTopicBtn">
+                        <i class="fas fa-exchange-alt"></i> Change Topic
+                    </button>
+                </div>
+                <button class="btn primary-btn" id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn submit-btn hidden" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Quiz
+                </button>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback hidden" id="feedback">
+                <!-- Feedback will appear here -->
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-container hidden" id="resultsContainer">
+            <div class="results-card">
+                <div class="results-header">
+                    <i class="fas fa-trophy"></i>
+                    <h2>Quiz Completed!</h2>
+                    <p class="quiz-completed-info">You have completed the <span id="completedQuizTitle">Web Development</span> quiz</p>
+                </div>
+                
+                <div class="score-display">
+                    <div class="score-circle">
+                        <svg width="120" height="120">
+                            <circle class="score-bg" cx="60" cy="60" r="54" stroke-width="12"></circle>
+                            <circle class="score-progress" cx="60" cy="60" r="54" stroke-width="12"></circle>
+                        </svg>
+                        <div class="score-text">
+                            <span id="finalScore">0</span>%
+                        </div>
+                    </div>
+                    
+                    <div class="score-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Correct Answers:</span>
+                            <span id="correctAnswers">0</span>/<span id="totalQuestionsResult">0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Time Taken:</span>
+                            <span id="timeTaken">0</span>s
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Accuracy:</span>
+                            <span id="accuracy">0</span>%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-message" id="resultsMessage">
+                    <!-- Message will be inserted here -->
+                </div>
+                
+                <div class="results-controls">
+                    <button class="btn primary-btn" id="retryBtn">
+                        <i class="fas fa-redo"></i> Retry Same Quiz
+                    </button>
+                    <button class="btn secondary-btn" id="newQuizBtn">
+                        <i class="fas fa-list"></i> Choose Another Topic
+                    </button>
+                    <button class="btn share-btn" id="shareBtn">
+                        <i class="fas fa-share-alt"></i> Share Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div class="modal hidden" id="exitConfirmationModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> Exit Quiz?</h3>
+            <p>Are you sure you want to exit? Your current progress will be lost.</p>
+            <div class="modal-buttons">
+                <button class="btn secondary-btn" id="cancelExit">Cancel</button>
+                <button class="btn warning-btn" id="confirmExit">Exit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Topic Confirmation Modal -->
+    <div class="modal hidden" id="changeTopicModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-exchange-alt"></i> Change Topic?</h3>
+            <p>Are you sure you want to change the quiz topic? Your current progress will be lost.</p>
+            <div class="modal-buttons">
+                <button class="btn secondary-btn" id="cancelChange">Cancel</button>
+                <button class="btn primary-btn" id="confirmChange">Change Topic</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal hidden" id="confirmationModal">
+        <div class="modal-content">
+            <h3>Submit Quiz?</h3>
+            <p>You still have <span id="remainingQuestions">0</span> questions unanswered. Are you sure you want to submit?</p>
+            <div class="modal-buttons">
+                <button class="btn secondary-btn" id="cancelSubmit">Cancel</button>
+                <button class="btn primary-btn" id="confirmSubmit">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
