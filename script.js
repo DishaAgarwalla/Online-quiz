@@ -1360,3 +1360,4 @@ function getCategoryName(topic) {
 // Initialize the app when DOM is loaded
 
 document.addEventListener('DOMContentLoaded', init);
+
